@@ -3,6 +3,7 @@ package com.fredcodecrafts.lab_week_05.api
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
+import com.fredcodecrafts.lab_week_05.model.ImageData
 
 interface CatApiService {
     @GET("images/search")
