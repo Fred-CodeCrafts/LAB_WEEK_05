@@ -8,6 +8,7 @@ import com.bumptech.glide.Glide
 class GlideLoader(private val context: Context) : ImageLoader {
     override fun loadImage(imageUrl: String, imageView: ImageView) {
         Glide.with(context)
+            .asBitmap() // <- force Bitmap decoding
             .load(imageUrl)
             .centerCrop()
             .into(imageView)

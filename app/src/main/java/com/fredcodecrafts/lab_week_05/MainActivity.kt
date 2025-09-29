@@ -53,7 +53,6 @@ class MainActivity : AppCompatActivity() {
         // Trigger API request
         getCatImageResponse()
     }
-
     private fun getCatImageResponse() {
         val call = catApiService.searchImages(1, "full")
         call.enqueue(object : Callback<List<ImageData>> {
@@ -66,17 +65,24 @@ class MainActivity : AppCompatActivity() {
                 response: Response<List<ImageData>>
             ) {
                 if (response.isSuccessful) {
-                    val image = response.body()
-                    val firstImage = image?.firstOrNull()?.imageUrl.orEmpty()
+                    val images = response.body()
 
-                    if (firstImage.isNotBlank()) {
-                        imageLoader.loadImage(firstImage, imageResultView)
+                    // First, check if images is null or empty
+                    if (!images.isNullOrEmpty()) {
+                        val firstImage = images[0] // safe because list is not empty
+
+                        // Load image safely
+                        imageLoader.loadImage(firstImage.imageUrl, imageResultView)
+
+                        // Safely get breed name or fallback to "Unknown"
+                        val breedName = firstImage.breeds?.firstOrNull()?.name ?: "Unknown"
+                        apiResponseView.text = "Breed: $breedName"
+
                     } else {
-                        Log.d(MAIN_ACTIVITY, "Missing image URL")
+                        Log.d(MAIN_ACTIVITY, "Response body is null or empty")
+                        apiResponseView.text = "Breed: Unknown"
                     }
 
-                    apiResponseView.text =
-                        getString(R.string.image_placeholder, firstImage)
                 } else {
                     Log.e(
                         MAIN_ACTIVITY,
@@ -86,4 +92,6 @@ class MainActivity : AppCompatActivity() {
             }
         })
     }
+
+
 }
